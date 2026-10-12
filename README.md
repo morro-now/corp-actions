@@ -4,6 +4,7 @@
 
 Built for the Superteam Kazakhstan x KASE side track, *Corporate Actions on Blockchain* (Colosseum hackathon).
 
+- **Live demo (Solana devnet)**: https://morro-corp-actions.vercel.app
 - **Technical overview** (architecture, record-date logic, entitlements, settlement, Solana components): [`docs/TECHNICAL_OVERVIEW.md`](docs/TECHNICAL_OVERVIEW.md)
 - **Program**: [`programs/corp_actions`](programs/corp_actions), program ID `F9PKgBW9a5ZBH19tM56WQvRWpfQjJvDpt5a6SuejUaFq`
 
