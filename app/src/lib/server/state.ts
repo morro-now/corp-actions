@@ -93,7 +93,18 @@ export function actionView(
   };
 }
 
+// Token metadata only changes when a vote passes; re-read it at most every 15 s (or after a transaction).
+let metadataCache: { at: number; mint: string; value: MetadataView | null } | null = null;
+
 async function readMetadata(c: Ctx): Promise<MetadataView | null> {
+  const key = c.mint.toBase58();
+  if (metadataCache && metadataCache.mint === key && Date.now() - metadataCache.at < 15_000) return metadataCache.value;
+  const value = await readMetadataUncached(c);
+  metadataCache = { at: Date.now(), mint: key, value };
+  return value;
+}
+
+async function readMetadataUncached(c: Ctx): Promise<MetadataView | null> {
   try {
     const m = await getTokenMetadata(c.connection, c.mint, "confirmed", TOKEN_2022_PROGRAM_ID);
     if (!m) return null;
@@ -103,18 +114,36 @@ async function readMetadata(c: Ctx): Promise<MetadataView | null> {
   }
 }
 
-export async function buildState(): Promise<StateView> {
+// Viewers share one state read per instance for a short window, which keeps public RPCs under their rate limits.
+const STATE_TTL_MS = 2_500;
+let stateCache: { at: number; promise: Promise<StateView> } | null = null;
+
+/** Drops cached chain reads so the next poll reflects a transaction that just landed. */
+export function invalidateState() {
+  stateCache = null;
+  metadataCache = null;
+}
+
+export function buildState(): Promise<StateView> {
+  if (stateCache && Date.now() - stateCache.at < STATE_TTL_MS) return stateCache.promise;
+  const promise = buildStateUncached();
+  stateCache = { at: Date.now(), promise };
+  promise.catch(() => {
+    if (stateCache?.promise === promise) stateCache = null;
+  });
+  return promise;
+}
+
+async function buildStateUncached(): Promise<StateView> {
   const c = ctx();
   const { config, client, connection, mint, settlementMint } = c;
 
-  const [bond, holders, actions, now, metadata] = await Promise.all([
-    client.fetchBond(mint),
-    client.fetchHolders(mint),
-    client.fetchActions(mint),
+  const [{ bond, holders, actions, entitlements }, now, metadata] = await Promise.all([
+    client.fetchMintState(mint),
     chainTime(connection),
     readMetadata(c),
   ]);
-  const entitlementsByAction = await Promise.all(actions.map((a) => client.fetchEntitlements(a.publicKey)));
+  const entitlementsByAction = actions.map((a) => entitlements.filter((e) => e.account.action.equals(a.publicKey)));
 
   // One batched read for every token balance and SOL balance we show.
   const owners = new Set<string>([...ROLES.map((r) => config.roles[r]), ...holders.map((h) => h.account.owner.toBase58())]);

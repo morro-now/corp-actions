@@ -92,6 +92,37 @@ export class MorroClient {
     return this.program.account.entitlement.all([{ memcmp: { offset: 8, bytes: action.toBase58() } }]);
   }
 
+  /**
+   * Bond, holders, actions and entitlements for one mint in a single getProgramAccounts call,
+   * decoded locally by account discriminator. Much lighter on rate-limited RPCs than one query per type.
+   */
+  async fetchMintState(mint: PublicKey): Promise<{
+    bond: BondConfig | null;
+    holders: Account<HolderRecord>[];
+    actions: Account<CorporateAction>[];
+    entitlements: Account<Entitlement>[];
+  }> {
+    const raw = await this.connection.getProgramAccounts(PROGRAM_ID, { commitment: "confirmed" });
+    const kinds = this.program.idl.accounts.map((a) => ({ name: a.name, disc: Buffer.from(a.discriminator) }));
+    const decoded: { kind: string; publicKey: PublicKey; account: unknown }[] = [];
+    for (const { pubkey, account } of raw) {
+      const data = Buffer.from(account.data);
+      const kind = kinds.find((k) => data.subarray(0, 8).equals(k.disc));
+      if (!kind) continue;
+      decoded.push({ kind: kind.name, publicKey: pubkey, account: this.program.coder.accounts.decode(kind.name, data) });
+    }
+    const of = <T>(kind: string) =>
+      decoded.filter((d) => d.kind === kind).map((d) => ({ publicKey: d.publicKey, account: d.account as T }));
+    const bond = of<BondConfig>("bondConfig").find((b) => b.account.mint.equals(mint))?.account ?? null;
+    const holders = of<HolderRecord>("holderRecord").filter((h) => h.account.mint.equals(mint));
+    const actions = of<CorporateAction>("corporateAction")
+      .filter((a) => a.account.mint.equals(mint))
+      .sort((a, b) => a.account.actionId - b.account.actionId);
+    const actionKeys = new Set(actions.map((a) => a.publicKey.toBase58()));
+    const entitlements = of<Entitlement>("entitlement").filter((e) => actionKeys.has(e.account.action.toBase58()));
+    return { bond, holders, actions, entitlements };
+  }
+
   async fetchBondsList(): Promise<Account<BondConfig>[]> {
     return this.program.account.bondConfig.all();
   }

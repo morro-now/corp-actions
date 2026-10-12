@@ -44,13 +44,12 @@ export async function crankOnce(
     done.push(msg);
     log(msg);
   };
-  const bond = await client.fetchBond(mint);
-  if (!bond) return done;
-  const [actions, holders, now] = await Promise.all([
-    client.fetchActions(mint),
-    client.fetchHolders(mint),
+  const [{ bond, holders, actions, entitlements }, now] = await Promise.all([
+    client.fetchMintState(mint),
     chainTime(client.connection),
   ]);
+  if (!bond) return done;
+  const entitlementsOf = (action: PublicKey) => entitlements.filter((e) => e.account.action.equals(action));
 
   for (const { publicKey: key, account: a } of actions) {
     const id = a.actionId;
@@ -60,7 +59,7 @@ export async function crankOnce(
     const retires = kind === "redemption" || kind === "partialRedemption";
 
     if (status === "announced" && now > a.recordTs.toNumber()) {
-      const existing = await client.fetchEntitlements(key);
+      const existing = entitlementsOf(key);
       const done_ = new Set(existing.map((e) => e.account.owner.toBase58()));
       const owners = holders
         .filter((h) => valueAt(h.account.history, a.recordTs.toNumber()) > 0n)
@@ -86,7 +85,7 @@ export async function crankOnce(
 
     const payable = onChain ? ["funded", "paying"] : ["snapshotted", "paying"];
     if (kind !== "vote" && payable.includes(status) && now >= a.paymentTs.toNumber()) {
-      const pending = (await client.fetchEntitlements(actionPda(mint, id))).filter(
+      const pending = entitlementsOf(actionPda(mint, id)).filter(
         (e) => enumName(e.account.status) === "pending",
       );
       for (const group of chunk(pending, 2)) {

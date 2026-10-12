@@ -37,7 +37,7 @@ export function useMorro(): MorroCtx {
   return c;
 }
 
-const POLL_MS = 3000;
+const POLL_MS = 4000;
 
 export function MorroProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<StateView | null>(null);
@@ -71,7 +71,10 @@ export function MorroProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setTick(Math.floor(Date.now() / 1000));
     refresh();
-    const poll = setInterval(refresh, POLL_MS);
+    // Skip polls while the tab is hidden to stay friendly to public RPC rate limits.
+    const poll = setInterval(() => {
+      if (document.visibilityState !== "hidden") refresh();
+    }, POLL_MS);
     const clock = setInterval(() => setTick(Math.floor(Date.now() / 1000)), 1000);
     return () => {
       clearInterval(poll);
