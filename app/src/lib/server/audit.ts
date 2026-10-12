@@ -111,13 +111,17 @@ export async function buildAudit(actionId: number): Promise<AuditView | null> {
     const mismatched = confirmed.filter(
       (e) => !rail.some((r) => r.ref === e.paymentRef && r.owner === e.owner && r.amountMinor === e.amount),
     );
+    // On serverless hosts the simulated rail's ledger is per-instance and may be gone; say so rather than fail.
+    const ledgerMissing = confirmed.length > 0 && rail.length === 0;
     checks.push({
       label: "Off-chain payment references match the rail ledger",
-      pass: confirmed.length === 0 ? null : mismatched.length === 0,
+      pass: confirmed.length === 0 || ledgerMissing ? null : mismatched.length === 0,
       detail:
         confirmed.length === 0
           ? "No confirmed payments yet"
-          : `${confirmed.length - mismatched.length} of ${confirmed.length} on-chain payment refs found in the rail ledger with matching owner and amount`,
+          : ledgerMissing
+            ? `${confirmed.length} payment ref(s) on-chain; the simulated rail ledger is not available on this server`
+            : `${confirmed.length - mismatched.length} of ${confirmed.length} on-chain payment refs found in the rail ledger with matching owner and amount`,
     });
   } else {
     checks.push({

@@ -88,7 +88,7 @@ export function actionView(
     announcedTs: a.announcedTs.toNumber(),
     closedTs: a.closedTs.toNumber(),
     escrowBalance,
-    reportAvailable: fs.existsSync(c.reportPath(a.actionId)),
+    reportAvailable: fs.existsSync(c.reportPath(a.actionId)) || enumName(a.status) === "closed",
     entitlements,
   };
 }

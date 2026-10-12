@@ -37,9 +37,13 @@ export interface DemoConfig {
   createdAt: string;
 }
 
-/** Demo state lives in `<repo>/.demo` (keys, config, simulated rail ledger); override with MORRO_DEMO_DIR. */
+/**
+ * Demo state lives in `<repo>/.demo` (keys, config, simulated rail ledger); override with MORRO_DEMO_DIR.
+ * On serverless hosts (Vercel) config and keys come from env vars and files go to /tmp.
+ */
 export function demoDir(): string {
   if (process.env.MORRO_DEMO_DIR) return process.env.MORRO_DEMO_DIR;
+  if (process.env.VERCEL) return "/tmp/morro-demo";
   // Walk up from cwd to the repo root (the folder holding Anchor.toml).
   let dir = process.cwd();
   while (!fs.existsSync(path.join(dir, "Anchor.toml")) && path.dirname(dir) !== dir) dir = path.dirname(dir);
@@ -47,6 +51,11 @@ export function demoDir(): string {
 }
 
 export function loadConfig(): DemoConfig {
+  // MORRO_DEMO_CONFIG: the contents of config.json; MORRO_RPC_URL optionally overrides its RPC endpoint.
+  if (process.env.MORRO_DEMO_CONFIG) {
+    const config: DemoConfig = JSON.parse(process.env.MORRO_DEMO_CONFIG);
+    return process.env.MORRO_RPC_URL ? { ...config, rpcUrl: process.env.MORRO_RPC_URL } : config;
+  }
   const file = path.join(demoDir(), "config.json");
   if (!fs.existsSync(file)) throw new Error(`No demo config at ${file}. Run \`npm run demo:setup\` first.`);
   return JSON.parse(fs.readFileSync(file, "utf8"));
@@ -68,6 +77,12 @@ export function loadOrCreateKey(role: Role): Keypair {
 }
 
 export function loadKey(role: Role): Keypair {
+  // MORRO_DEMO_KEYS: JSON object mapping each role to its secret key byte array.
+  if (process.env.MORRO_DEMO_KEYS) {
+    const keys: Record<string, number[]> = JSON.parse(process.env.MORRO_DEMO_KEYS);
+    if (!keys[role]) throw new Error(`MORRO_DEMO_KEYS has no key for ${role}`);
+    return Keypair.fromSecretKey(Uint8Array.from(keys[role]));
+  }
   const file = path.join(demoDir(), "keys", `${role}.json`);
   return Keypair.fromSecretKey(Uint8Array.from(JSON.parse(fs.readFileSync(file, "utf8"))));
 }
@@ -104,6 +119,7 @@ export function explorerAddressUrl(config: Pick<DemoConfig, "cluster" | "rpcUrl"
 
 export function appendRailLedger(entries: unknown[]) {
   if (entries.length === 0) return;
+  fs.mkdirSync(demoDir(), { recursive: true });
   const file = path.join(demoDir(), "rail-ledger.json");
   const existing: unknown[] = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : [];
   fs.writeFileSync(file, JSON.stringify([...existing, ...entries], null, 2));
