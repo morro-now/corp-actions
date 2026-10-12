@@ -1,0 +1,12 @@
+# Never upload keys, demo state or build output to Vercel
+.demo
+.demo-devnet
+.anchor
+.env*
+target
+media
+node_modules
+**/node_modules
+app/.next
+test-ledger
+*.log

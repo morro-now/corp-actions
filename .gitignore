@@ -10,3 +10,6 @@ test-ledger
 dist
 *.tsbuildinfo
 .claude/
+media/
+.vercel
+.env*
