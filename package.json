@@ -1,0 +1,32 @@
+{
+  "name": "morro",
+  "private": true,
+  "description": "Morro: corporate actions for tokenized bonds on Solana",
+  "workspaces": [
+    "sdk",
+    "services",
+    "app"
+  ],
+  "scripts": {
+    "build:program": "anchor build && npm run sync-idl",
+    "sync-idl": "cp target/idl/corp_actions.json sdk/src/idl/corp_actions.json && cp target/types/corp_actions.ts sdk/src/idl/corp_actions.ts",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "cargo test -p corp_actions --lib",
+    "test:integration": "mocha -r tsx/cjs -t 120000 'tests/**/*.test.ts'",
+    "demo:setup": "tsx services/src/setup-demo.ts",
+    "crank": "tsx services/src/crank.ts",
+    "paying-agent": "tsx services/src/paying-agent.ts",
+    "dev": "npm -w app run dev",
+    "e2e:live": "tsx services/src/e2e-live.ts"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.20",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.0",
+    "chai": "^4.5.0",
+    "litesvm": "^0.8.0",
+    "mocha": "^11.1.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

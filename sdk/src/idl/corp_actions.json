@@ -1,0 +1,3356 @@
+{
+  "address": "F9PKgBW9a5ZBH19tM56WQvRWpfQjJvDpt5a6SuejUaFq",
+  "metadata": {
+    "name": "corp_actions",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Morro: corporate actions for tokenized bonds on Solana"
+  },
+  "instructions": [
+    {
+      "name": "announce",
+      "discriminator": [
+        7,
+        30,
+        100,
+        250,
+        110,
+        253,
+        3,
+        149
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "bond.next_action_id",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "AnnounceArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "cast_vote",
+      "discriminator": [
+        20,
+        212,
+        15,
+        189,
+        69,
+        180,
+        69,
+        151
+      ],
+      "accounts": [
+        {
+          "name": "owner",
+          "signer": true
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action.mint",
+                "account": "CorporateAction"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entitlement",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "yes",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "close_action",
+      "discriminator": [
+        68,
+        91,
+        38,
+        183,
+        124,
+        74,
+        239,
+        136
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "escrow",
+          "docs": [
+            "Required for on-chain settlement: emptied and closed."
+          ],
+          "writable": true,
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              }
+            ]
+          }
+        },
+        {
+          "name": "issuer_settlement_account",
+          "docs": [
+            "Receives any escrow remainder (zero when every entitlement was paid)."
+          ],
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "settlement_token_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "report_hash",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "confirm_payment",
+      "discriminator": [
+        221,
+        23,
+        112,
+        126,
+        29,
+        23,
+        159,
+        223
+      ],
+      "accounts": [
+        {
+          "name": "paying_agent",
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entitlement",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              },
+              {
+                "kind": "account",
+                "path": "entitlement.owner",
+                "account": "Entitlement"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "entitlement.owner",
+                "account": "Entitlement"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder_bond_account",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "bond_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "payment_ref",
+          "type": {
+            "array": [
+              "u8",
+              32
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "distribute",
+      "discriminator": [
+        191,
+        44,
+        223,
+        207,
+        164,
+        236,
+        126,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "docs": [
+            "Anyone may push payments once the payment date is reached."
+          ],
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entitlement",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              },
+              {
+                "kind": "account",
+                "path": "entitlement.owner",
+                "account": "Entitlement"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "entitlement.owner",
+                "account": "Entitlement"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder_bond_account",
+          "docs": [
+            "Required when bonds are retired."
+          ],
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "escrow",
+          "docs": [
+            "Required for on-chain settlement."
+          ],
+          "writable": true,
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder_settlement_account",
+          "docs": [
+            "Required for on-chain settlement."
+          ],
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "bond_token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "settlement_token_program"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finalize_snapshot",
+      "discriminator": [
+        164,
+        5,
+        101,
+        146,
+        139,
+        235,
+        67,
+        48
+      ],
+      "accounts": [
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "finalize_vote",
+      "discriminator": [
+        181,
+        176,
+        6,
+        248,
+        249,
+        134,
+        146,
+        56
+      ],
+      "accounts": [
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "fund_escrow",
+      "discriminator": [
+        155,
+        18,
+        218,
+        141,
+        182,
+        213,
+        69,
+        201
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "issuer_settlement_account",
+          "writable": true
+        },
+        {
+          "name": "escrow",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  115,
+                  99,
+                  114,
+                  111,
+                  119
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              }
+            ]
+          }
+        },
+        {
+          "name": "settlement_token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_bond",
+      "discriminator": [
+        135,
+        182,
+        183,
+        104,
+        169,
+        38,
+        102,
+        147
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "settlement_mint"
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "extra_account_meta_list",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  116,
+                  114,
+                  97,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "InitBondArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "issue",
+      "discriminator": [
+        190,
+        1,
+        98,
+        214,
+        81,
+        99,
+        222,
+        247
+      ],
+      "accounts": [
+        {
+          "name": "issuer",
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              },
+              {
+                "kind": "account",
+                "path": "holder.owner",
+                "account": "HolderRecord"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder_token_account",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "register_holder",
+      "discriminator": [
+        113,
+        111,
+        117,
+        246,
+        175,
+        59,
+        98,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "registrar",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner"
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "set_holder_status",
+      "discriminator": [
+        121,
+        5,
+        238,
+        79,
+        85,
+        126,
+        216,
+        174
+      ],
+      "accounts": [
+        {
+          "name": "registrar",
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "holder",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "holder.owner",
+                "account": "HolderRecord"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": [
+        {
+          "name": "kyc_approved",
+          "type": "bool"
+        },
+        {
+          "name": "frozen",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "snapshot_holder",
+      "discriminator": [
+        33,
+        225,
+        166,
+        163,
+        73,
+        94,
+        167,
+        96
+      ],
+      "accounts": [
+        {
+          "name": "payer",
+          "docs": [
+            "Anyone may run the snapshot; the payer only funds the Entitlement account."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "bond",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  99,
+                  116,
+                  105,
+                  111,
+                  110
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "action.action_id",
+                "account": "CorporateAction"
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "relations": [
+            "action"
+          ]
+        },
+        {
+          "name": "holder",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  104,
+                  111,
+                  108,
+                  100,
+                  101,
+                  114
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "bond.mint",
+                "account": "BondConfig"
+              },
+              {
+                "kind": "account",
+                "path": "holder.owner",
+                "account": "HolderRecord"
+              }
+            ]
+          }
+        },
+        {
+          "name": "entitlement",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "action"
+              },
+              {
+                "kind": "account",
+                "path": "holder.owner",
+                "account": "HolderRecord"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "event_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  95,
+                  95,
+                  101,
+                  118,
+                  101,
+                  110,
+                  116,
+                  95,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "transfer_hook",
+      "docs": [
+        "Token-2022 transfer hook: KYC check on the receiver and balance checkpoints."
+      ],
+      "discriminator": [
+        105,
+        37,
+        101,
+        197,
+        75,
+        251,
+        102,
+        26
+      ],
+      "accounts": [
+        {
+          "name": "source_token"
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "destination_token"
+        },
+        {
+          "name": "authority"
+        },
+        {
+          "name": "extra_account_meta_list",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  116,
+                  114,
+                  97,
+                  45,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                  45,
+                  109,
+                  101,
+                  116,
+                  97,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "bond",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  98,
+                  111,
+                  110,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ]
+          }
+        },
+        {
+          "name": "source_holder",
+          "writable": true
+        },
+        {
+          "name": "destination_holder",
+          "writable": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "BondConfig",
+      "discriminator": [
+        142,
+        20,
+        216,
+        1,
+        7,
+        142,
+        247,
+        125
+      ]
+    },
+    {
+      "name": "CorporateAction",
+      "discriminator": [
+        144,
+        225,
+        182,
+        199,
+        4,
+        234,
+        12,
+        32
+      ]
+    },
+    {
+      "name": "Entitlement",
+      "discriminator": [
+        220,
+        250,
+        27,
+        244,
+        55,
+        49,
+        74,
+        154
+      ]
+    },
+    {
+      "name": "HolderRecord",
+      "discriminator": [
+        215,
+        67,
+        31,
+        41,
+        155,
+        251,
+        178,
+        128
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "ActionAnnounced",
+      "discriminator": [
+        183,
+        193,
+        90,
+        98,
+        193,
+        99,
+        3,
+        0
+      ]
+    },
+    {
+      "name": "ActionClosed",
+      "discriminator": [
+        12,
+        207,
+        175,
+        173,
+        7,
+        142,
+        107,
+        78
+      ]
+    },
+    {
+      "name": "BondInitialized",
+      "discriminator": [
+        73,
+        68,
+        161,
+        2,
+        214,
+        12,
+        169,
+        53
+      ]
+    },
+    {
+      "name": "BondsIssued",
+      "discriminator": [
+        151,
+        56,
+        248,
+        249,
+        219,
+        123,
+        198,
+        149
+      ]
+    },
+    {
+      "name": "BondsRetired",
+      "discriminator": [
+        7,
+        184,
+        19,
+        197,
+        147,
+        96,
+        51,
+        226
+      ]
+    },
+    {
+      "name": "EntitlementPaid",
+      "discriminator": [
+        12,
+        205,
+        37,
+        164,
+        180,
+        249,
+        36,
+        79
+      ]
+    },
+    {
+      "name": "EscrowFunded",
+      "discriminator": [
+        228,
+        243,
+        166,
+        74,
+        22,
+        167,
+        157,
+        244
+      ]
+    },
+    {
+      "name": "HolderRegistered",
+      "discriminator": [
+        201,
+        78,
+        223,
+        133,
+        103,
+        164,
+        173,
+        136
+      ]
+    },
+    {
+      "name": "HolderSnapshotted",
+      "discriminator": [
+        150,
+        155,
+        26,
+        183,
+        44,
+        30,
+        104,
+        143
+      ]
+    },
+    {
+      "name": "HolderStatusChanged",
+      "discriminator": [
+        155,
+        49,
+        30,
+        66,
+        101,
+        18,
+        34,
+        6
+      ]
+    },
+    {
+      "name": "PaymentConfirmed",
+      "discriminator": [
+        196,
+        8,
+        147,
+        26,
+        213,
+        102,
+        158,
+        183
+      ]
+    },
+    {
+      "name": "PaymentInstructed",
+      "discriminator": [
+        215,
+        219,
+        25,
+        147,
+        92,
+        190,
+        122,
+        44
+      ]
+    },
+    {
+      "name": "SnapshotFinalized",
+      "discriminator": [
+        17,
+        215,
+        152,
+        185,
+        112,
+        229,
+        188,
+        101
+      ]
+    },
+    {
+      "name": "TermsAmended",
+      "discriminator": [
+        165,
+        218,
+        140,
+        238,
+        243,
+        240,
+        147,
+        185
+      ]
+    },
+    {
+      "name": "VoteCast",
+      "discriminator": [
+        39,
+        53,
+        195,
+        104,
+        188,
+        17,
+        225,
+        213
+      ]
+    },
+    {
+      "name": "VoteFinalized",
+      "discriminator": [
+        183,
+        215,
+        21,
+        9,
+        39,
+        161,
+        211,
+        42
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidMint",
+      "msg": "Mint must have 0 decimals and zero supply"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidMintAuthority",
+      "msg": "Mint authority must be the bond PDA"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidTransferHook",
+      "msg": "Mint transfer hook must point to this program"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidPermanentDelegate",
+      "msg": "Mint permanent delegate must be the bond PDA"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidBondTerms",
+      "msg": "Invalid bond terms"
+    },
+    {
+      "code": 6005,
+      "name": "NotIssuer",
+      "msg": "Signer is not the issuer"
+    },
+    {
+      "code": 6006,
+      "name": "NotRegistrar",
+      "msg": "Signer is not the registrar"
+    },
+    {
+      "code": 6007,
+      "name": "NotPayingAgent",
+      "msg": "Signer is not the paying agent"
+    },
+    {
+      "code": 6008,
+      "name": "HolderNotApproved",
+      "msg": "Holder is not KYC-approved"
+    },
+    {
+      "code": 6009,
+      "name": "HolderFrozen",
+      "msg": "Holder is frozen"
+    },
+    {
+      "code": 6010,
+      "name": "ReceiverNotApproved",
+      "msg": "Receiver is not a KYC-approved holder"
+    },
+    {
+      "code": 6011,
+      "name": "BondNotActive",
+      "msg": "Bond is no longer active"
+    },
+    {
+      "code": 6012,
+      "name": "TransfersLocked",
+      "msg": "Transfers are locked for an open redemption"
+    },
+    {
+      "code": 6013,
+      "name": "NotTransferring",
+      "msg": "Hook called outside a token transfer"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidActionParams",
+      "msg": "Invalid action parameters"
+    },
+    {
+      "code": 6015,
+      "name": "RecordDateInPast",
+      "msg": "Record date must be in the future"
+    },
+    {
+      "code": 6016,
+      "name": "RedemptionAlreadyOpen",
+      "msg": "Another redemption is already open"
+    },
+    {
+      "code": 6017,
+      "name": "TooManyOpenActions",
+      "msg": "Too many actions awaiting a snapshot"
+    },
+    {
+      "code": 6018,
+      "name": "CheckpointHistoryFull",
+      "msg": "Balance history is full and still needed by an open record date; finalize that snapshot first"
+    },
+    {
+      "code": 6019,
+      "name": "RecordDateNotReached",
+      "msg": "Record date has not passed yet"
+    },
+    {
+      "code": 6020,
+      "name": "InvalidActionStatus",
+      "msg": "Action is not in the required state"
+    },
+    {
+      "code": 6021,
+      "name": "NoBalanceAtRecord",
+      "msg": "Holder had no bonds at the record date"
+    },
+    {
+      "code": 6022,
+      "name": "SnapshotIncomplete",
+      "msg": "Snapshot is incomplete: snapshotted balance does not equal supply at record date"
+    },
+    {
+      "code": 6023,
+      "name": "NotAPaymentAction",
+      "msg": "Action does not pay cash"
+    },
+    {
+      "code": 6024,
+      "name": "WrongSettlementMode",
+      "msg": "Wrong settlement mode for this instruction"
+    },
+    {
+      "code": 6025,
+      "name": "PaymentDateNotReached",
+      "msg": "Payment date has not been reached"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidEntitlementStatus",
+      "msg": "Entitlement is not in the required state"
+    },
+    {
+      "code": 6027,
+      "name": "MissingAccount",
+      "msg": "A required account is missing"
+    },
+    {
+      "code": 6028,
+      "name": "WrongTokenAccount",
+      "msg": "Token account does not belong to the holder"
+    },
+    {
+      "code": 6029,
+      "name": "SettlementIncomplete",
+      "msg": "Not every entitlement has been settled"
+    },
+    {
+      "code": 6030,
+      "name": "VotingClosed",
+      "msg": "Voting is closed"
+    },
+    {
+      "code": 6031,
+      "name": "VotingOpen",
+      "msg": "Voting is still open"
+    },
+    {
+      "code": 6032,
+      "name": "AlreadyVoted",
+      "msg": "Holder has already voted"
+    },
+    {
+      "code": 6033,
+      "name": "MathOverflow",
+      "msg": "Arithmetic overflow"
+    }
+  ],
+  "types": [
+    {
+      "name": "ActionAnnounced",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "action_id",
+            "type": "u32"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "ActionKind"
+              }
+            }
+          },
+          {
+            "name": "record_ts",
+            "type": "i64"
+          },
+          {
+            "name": "payment_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ActionClosed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_paid",
+            "type": "u64"
+          },
+          {
+            "name": "total_retired",
+            "type": "u64"
+          },
+          {
+            "name": "report_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "ActionKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Coupon"
+          },
+          {
+            "name": "Redemption"
+          },
+          {
+            "name": "PartialRedemption"
+          },
+          {
+            "name": "Vote"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ActionStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Announced"
+          },
+          {
+            "name": "Snapshotted"
+          },
+          {
+            "name": "Funded"
+          },
+          {
+            "name": "Paying"
+          },
+          {
+            "name": "Closed"
+          },
+          {
+            "name": "Voting"
+          },
+          {
+            "name": "Passed"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AnnounceArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "ActionKind"
+              }
+            }
+          },
+          {
+            "name": "settlement_mode",
+            "type": {
+              "defined": {
+                "name": "SettlementMode"
+              }
+            }
+          },
+          {
+            "name": "record_ts",
+            "type": "i64"
+          },
+          {
+            "name": "payment_ts",
+            "type": "i64"
+          },
+          {
+            "name": "period_start_ts",
+            "type": "i64"
+          },
+          {
+            "name": "period_end_ts",
+            "type": "i64"
+          },
+          {
+            "name": "redeem_bps",
+            "type": "u16"
+          },
+          {
+            "name": "new_maturity_ts",
+            "type": "i64"
+          },
+          {
+            "name": "quorum_bps",
+            "type": "u16"
+          },
+          {
+            "name": "threshold_bps",
+            "type": "u16"
+          },
+          {
+            "name": "vote_end_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BondConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "issuer",
+            "type": "pubkey"
+          },
+          {
+            "name": "registrar",
+            "type": "pubkey"
+          },
+          {
+            "name": "paying_agent",
+            "type": "pubkey"
+          },
+          {
+            "name": "settlement_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "face_value",
+            "docs": [
+              "Face value per bond, in settlement-token minor units (tiyn)."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "coupon_rate_bps",
+            "type": "u32"
+          },
+          {
+            "name": "coupon_freq",
+            "type": "u8"
+          },
+          {
+            "name": "day_count",
+            "type": {
+              "defined": {
+                "name": "DayCount"
+              }
+            }
+          },
+          {
+            "name": "issue_ts",
+            "type": "i64"
+          },
+          {
+            "name": "maturity_ts",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "BondStatus"
+              }
+            }
+          },
+          {
+            "name": "transfer_lock_ts",
+            "docs": [
+              "Non-zero while a redemption is open: transfers are rejected from this time on."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "next_action_id",
+            "type": "u32"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          },
+          {
+            "name": "holder_count",
+            "type": "u32"
+          },
+          {
+            "name": "pending_record_ts",
+            "docs": [
+              "Record dates whose snapshot is not finalized yet (0 = empty slot)."
+            ],
+            "type": {
+              "array": [
+                "i64",
+                8
+              ]
+            }
+          },
+          {
+            "name": "supply_history",
+            "type": {
+              "defined": {
+                "name": "Checkpoints"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BondInitialized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "issuer",
+            "type": "pubkey"
+          },
+          {
+            "name": "face_value",
+            "type": "u64"
+          },
+          {
+            "name": "coupon_rate_bps",
+            "type": "u32"
+          },
+          {
+            "name": "maturity_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BondStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Redeemed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BondsIssued",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BondsRetired",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Checkpoint",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "ts",
+            "type": "i64"
+          },
+          {
+            "name": "value",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Checkpoints",
+      "docs": [
+        "Time-ordered history of a value (a holder's balance or the bond's supply)."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "len",
+            "type": "u8"
+          },
+          {
+            "name": "items",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "Checkpoint"
+                  }
+                },
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CorporateAction",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "action_id",
+            "type": "u32"
+          },
+          {
+            "name": "kind",
+            "type": {
+              "defined": {
+                "name": "ActionKind"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "ActionStatus"
+              }
+            }
+          },
+          {
+            "name": "settlement_mode",
+            "type": {
+              "defined": {
+                "name": "SettlementMode"
+              }
+            }
+          },
+          {
+            "name": "record_ts",
+            "type": "i64"
+          },
+          {
+            "name": "payment_ts",
+            "type": "i64"
+          },
+          {
+            "name": "period_start_ts",
+            "docs": [
+              "Coupon accrual period; equal values mean no coupon (e.g. partial redemption)."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "period_end_ts",
+            "type": "i64"
+          },
+          {
+            "name": "redeem_bps",
+            "docs": [
+              "Share of each holding retired, in bps (10,000 for a full redemption)."
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "new_maturity_ts",
+            "type": "i64"
+          },
+          {
+            "name": "quorum_bps",
+            "type": "u16"
+          },
+          {
+            "name": "threshold_bps",
+            "type": "u16"
+          },
+          {
+            "name": "vote_end_ts",
+            "type": "i64"
+          },
+          {
+            "name": "supply_at_record",
+            "type": "u64"
+          },
+          {
+            "name": "snapshotted_balance",
+            "type": "u64"
+          },
+          {
+            "name": "holders_snapshotted",
+            "type": "u32"
+          },
+          {
+            "name": "holders_settled",
+            "type": "u32"
+          },
+          {
+            "name": "total_entitlement",
+            "type": "u64"
+          },
+          {
+            "name": "total_paid",
+            "type": "u64"
+          },
+          {
+            "name": "total_retired",
+            "type": "u64"
+          },
+          {
+            "name": "votes_yes",
+            "type": "u64"
+          },
+          {
+            "name": "votes_no",
+            "type": "u64"
+          },
+          {
+            "name": "snapshot_digest",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "report_hash",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "announced_ts",
+            "type": "i64"
+          },
+          {
+            "name": "closed_ts",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "DayCount",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Thirty360"
+          },
+          {
+            "name": "Act365"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Entitlement",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "balance_at_record",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "docs": [
+              "Cash owed, in settlement-token minor units."
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "bonds_to_retire",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "EntitlementStatus"
+              }
+            }
+          },
+          {
+            "name": "settled_ts",
+            "type": "i64"
+          },
+          {
+            "name": "payment_ref",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "vote",
+            "type": {
+              "defined": {
+                "name": "VoteChoice"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EntitlementPaid",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EntitlementStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Instructed"
+          },
+          {
+            "name": "Paid"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EscrowFunded",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HolderRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "kyc_approved",
+            "type": "bool"
+          },
+          {
+            "name": "frozen",
+            "type": "bool"
+          },
+          {
+            "name": "balance",
+            "type": "u64"
+          },
+          {
+            "name": "history",
+            "type": {
+              "defined": {
+                "name": "Checkpoints"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HolderRegistered",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "HolderSnapshotted",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "balance_at_record",
+            "type": "u64"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "bonds_to_retire",
+            "type": "u64"
+          },
+          {
+            "name": "digest",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HolderStatusChanged",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "kyc_approved",
+            "type": "bool"
+          },
+          {
+            "name": "frozen",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "InitBondArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "face_value",
+            "type": "u64"
+          },
+          {
+            "name": "coupon_rate_bps",
+            "type": "u32"
+          },
+          {
+            "name": "coupon_freq",
+            "type": "u8"
+          },
+          {
+            "name": "day_count",
+            "type": {
+              "defined": {
+                "name": "DayCount"
+              }
+            }
+          },
+          {
+            "name": "issue_ts",
+            "type": "i64"
+          },
+          {
+            "name": "maturity_ts",
+            "type": "i64"
+          },
+          {
+            "name": "registrar",
+            "type": "pubkey"
+          },
+          {
+            "name": "paying_agent",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentConfirmed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "payment_ref",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PaymentInstructed",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SettlementMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "OnChain"
+          },
+          {
+            "name": "OffChain"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SnapshotFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "supply_at_record",
+            "type": "u64"
+          },
+          {
+            "name": "holders",
+            "type": "u32"
+          },
+          {
+            "name": "total_entitlement",
+            "type": "u64"
+          },
+          {
+            "name": "digest",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "TermsAmended",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "old_maturity_ts",
+            "type": "i64"
+          },
+          {
+            "name": "new_maturity_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteCast",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "yes",
+            "type": "bool"
+          },
+          {
+            "name": "weight",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteChoice",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "None"
+          },
+          {
+            "name": "Yes"
+          },
+          {
+            "name": "No"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteFinalized",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "action",
+            "type": "pubkey"
+          },
+          {
+            "name": "votes_yes",
+            "type": "u64"
+          },
+          {
+            "name": "votes_no",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "ActionStatus"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+.anchor
+.DS_Store
+target
+node_modules
+test-ledger
+.next
+.env*.local
+.demo/
+.demo-devnet/
+dist
+*.tsbuildinfo
+.claude/

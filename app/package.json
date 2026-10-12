@@ -1,0 +1,31 @@
+{
+  "name": "@morro/app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Morro web app: issuer console, holder portal and auditor view",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@morro/sdk": "*",
+    "@morro/services": "*",
+    "@noble/hashes": "^1.8.0",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.0",
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@morro/sdk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Morro TypeScript SDK: PDAs, instruction builders, account fetchers and entitlement math",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@noble/hashes": "^1.7.1",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/spl-token-metadata": "^0.1.6",
+    "@solana/web3.js": "^1.98.0",
+    "bn.js": "^5.2.1",
+    "bs58": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6"
+  }
+}
